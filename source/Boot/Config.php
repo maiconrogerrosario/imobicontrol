@@ -10,25 +10,25 @@ if (strpos($_SERVER['HTTP_HOST'], "localhost")) {
 }else{
     define("CONF_DB_HOST", "imobicontrol.mysql.dbaas.com.br");
     define("CONF_DB_USER", "imobicontrol");
-    define("CONF_DB_PASS", "imobicontrol");
+    define("CONF_DB_PASS", "imobicontrol123456");
     define("CONF_DB_NAME", "imobicontrol");
 }
 
 /**
  * PROJECT URLs
  */
-define("CONF_URL_BASE", "https://www.imobicontrol.com.br");
+define("CONF_URL_BASE", "https://www.seudominio.com.br");
 define("CONF_URL_TEST", "https://www.localhost/imobicontrol");
 
 /**
  * SITE
  */
-define("CONF_SITE_NAME", "3wstecnologia");
+define("CONF_SITE_NAME", "");
 define("CONF_SITE_TITLE", "Desenvolvimento de Software");
 define("CONF_SITE_DESC",
-    "A 3wstecnologia é uma empresa de desenvolvimento de software e aplicativos movéis");
+    "");
 define("CONF_SITE_LANG", "pt_BR");
-define("CONF_SITE_DOMAIN", "3wstecnologia.com.br");
+define("CONF_SITE_DOMAIN", "");
 define("CONF_SITE_ADDR_STREET", "");
 define("CONF_SITE_ADDR_NUMBER", "");
 define("CONF_SITE_ADDR_COMPLEMENT", "");
@@ -69,9 +69,8 @@ define("CONF_PASSWD_OPTION", ["cost" => 10]);
  */
 define("CONF_VIEW_PATH", __DIR__ . "/../../shared/views");
 define("CONF_VIEW_EXT", "php");
-define("CONF_VIEW_THEME", "cafeweb");
-define("CONF_VIEW_APP", "cafeapp");
-define("CONF_VIEW_WORK", "cafework");
+define("CONF_VIEW_THEME", "imobweb");
+define("CONF_VIEW_WORK", "imobwork");
 
 
 /**

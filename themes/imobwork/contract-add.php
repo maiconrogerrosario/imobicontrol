@@ -120,7 +120,7 @@
 										</div>
 
 										
-value_administration
+
 										
 										<div class="form-group">
 											<div class="col-md-12">

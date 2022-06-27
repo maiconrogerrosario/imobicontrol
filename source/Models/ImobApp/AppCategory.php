@@ -1,12 +1,13 @@
 <?php
 
-namespace Source\Models\CafeApp;
+namespace Source\Models\ImobApp;
 
 use Source\Core\Model;
+use Source\Models\User;
 
 /**
  * Class AppCategory
- * @package Source\Models\CafeApp
+ * @package Source\Models\ImobApp
  */
 class AppCategory extends Model
 {
@@ -16,6 +17,34 @@ class AppCategory extends Model
     public function __construct()
     {
         parent::__construct("app_categories", ["id"], ["name", "type"]);
+    }
+	
+	/**
+     * @param User $user
+     * @return AppWallet
+     */
+    public function monthlyCategory(User $user): AppCategory
+    {
+       
+			$this->application_id = $user->application_id;
+			$this->user_id = $user->id;
+            $this->name = "Mensalidade";
+            $this->type = "income";
+            $this->save();
+    
+			return $this;
+    }
+	
+	public function transferCategory(User $user): AppCategory
+    {
+			$this->application_id = $user->application_id;
+			$this->user_id = $user->id;
+            $this->name = "Repasse";
+            $this->type = "expense";
+            $this->save();
+        
+		
+        return $this;
     }
 	
 	 public function bootstrap(

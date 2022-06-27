@@ -2,7 +2,7 @@
     <!--INCOME-->
     <?php
     $user = user();
-    $wallets = (new \Source\Models\CafeApp\AppWallet())
+    $wallets = (new \Source\Models\ImobApp\AppWallet())
         ->find("application_id = :application_id", "application_id={$user->application_id}", "id, wallet")
         ->order("wallet")
         ->fetch(true);
@@ -12,7 +12,7 @@
 	$v->insert("views/invoice", [
         "type" => "income",
         "wallets" => $wallets,
-        "categories" => (new \Source\Models\CafeApp\AppCategory())
+        "categories" => (new \Source\Models\ImobApp\AppCategory())
 			->find("application_id = :aplication AND type = :t", "t=income&aplication={$user->application_id}", "id, name")
             ->order("order_by, name")
             ->fetch(true)
@@ -21,28 +21,15 @@
     $v->insert("views/invoice", [
         "type" => "expense",
         "wallets" => $wallets,
-        "categories" => (new \Source\Models\CafeApp\AppCategory())
+        "categories" => (new \Source\Models\ImobApp\AppCategory())
 			->find("application_id = :aplication AND type = :t", "t=expense&aplication={$user->application_id}", "id, name")
             ->order("order_by, name")
             ->fetch(true)
     ]);
 	
-	$v->insert("views/invoiceproject", [
-        "type" => "income",
-        "categories" => (new \Source\Models\CafeApp\AppCategory())
-            ->find("application_id = :aplication AND type = :t", "t=income&aplication={$user->application_id}", "id, name")
-            ->order("order_by, name")
-            ->fetch(true)
-    ]);
+	
 
-    $v->insert("views/invoiceproject", [
-        "type" => "expense",
-        "categories" => (new \Source\Models\CafeApp\AppCategory())
-			->find("application_id = :aplication AND type = :t", "t=expense&aplication={$user->application_id}", "id, name")
-            ->order("order_by, name")
-            ->fetch(true)
-    ]);
-	
+   
 	
 	
     ?>

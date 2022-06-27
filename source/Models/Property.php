@@ -17,7 +17,7 @@ class Property extends Model
      */
     public function __construct()
     {
-        parent::__construct("teste", ["id"], ["address_street", "address_number"]);
+        parent::__construct("property", ["id"], ["address_street", "address_number"]);
     }
 
     /**
@@ -64,13 +64,6 @@ class Property extends Model
         return "{$this->address_street}" ." ". "nº{$this->address_number}";
     }
 		
-
-    public function findByEmail(string $email,string $application_id, string $columns = "*"): ?Property
-    {
-        $find = $this->find("email = :email AND application_id = :application_id", "email={$email}&application_id={$application_id}", $columns);
-        return $find->fetch();
-    } 
-	
 	public function findByAddress( 
 	   string $address_street,
 	   string $address_number,
@@ -122,8 +115,7 @@ class Property extends Model
         if (!empty($this->id)) {
             $propertyId = $this->id;
 
-           
-
+         
             $this->update($this->safe(), "id = :id", "id={$propertyId}");
             if ($this->fail()) {
                 $this->message->error("Erro ao atualizar, verifique os dados");
@@ -133,7 +125,6 @@ class Property extends Model
 
         /** User Create */
         if (empty($this->id)) {
-			
 			
             if ($this->findByAddress(
 				$this->address_street,

@@ -1,13 +1,13 @@
 <?php
 
-namespace Source\Models\CafeApp;
+namespace Source\Models\ImobApp;
 
 use Source\Core\Model;
 use Source\Models\User;
 
 /**
  * Class AppWallet
- * @package Source\Models\CafeApp
+ * @package Source\Models\ImobApp
  */
 class AppWallet extends Model
 {

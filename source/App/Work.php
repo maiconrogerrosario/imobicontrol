@@ -6,15 +6,9 @@ use Source\Core\Controller;
 use Source\Core\Session;
 use Source\Core\View;
 use Source\Models\Auth;
-use Source\Models\CafeApp\AppCategory;
-use Source\Models\CafeApp\AppInvoice;
-use Source\Models\CafeApp\AppOrder;
-use Source\Models\CafeApp\AppPlan;
-use Source\Models\CafeApp\AppSubscription;
-use Source\Models\CafeApp\AppWallet;
-use Source\Models\Post;
-use Source\Models\Report\Access;
-use Source\Models\Report\Online;
+use Source\Models\ImobApp\AppCategory;
+use Source\Models\ImobApp\AppInvoice;
+use Source\Models\ImobApp\AppWallet;
 use Source\Models\User;
 use Source\Support\Email;
 use Source\Support\QRC;
@@ -54,83 +48,14 @@ class Work extends Controller
             $this->message->warning("Efetue login para acessar o APP.")->flash();
             redirect("/entrar");
         }
+		
+		(new AppCategory())->monthlyCategory($this->user);
+		(new AppCategory())->transferCategory($this->user);
 
         
-		 //(new AppWallet())->start($this->user);
-         //(new AppInvoice())->fixed($this->user, 3);
-
-        //UNCONFIRMED EMAIL
-        if ($this->user->status != "confirmed") {
-            $session = new Session();
-            if (!$session->has("appconfirmed")) {
-                $this->message->info("IMPORTANTE: Acesse seu e-mail para confirmar seu cadastro e ativar todos os recursos.")->flash();
-                $session->set("appconfirmed", true);
-                (new Auth())->register($this->user);
-            }
-        }
     }
 
-	 /**
-     * @param array|null $data
-     */
-    public function dash(?array $data): void
-    {
-        if (!empty($data["wallet"])) {
-            $session = new Session();
-
-            if ($data["wallet"] == "all") {
-                $session->unset("walletfilter");
-                echo json_encode(["filter" => true]);
-                return;
-            }
-			
-			if ($data["wallet"] == "anual") {
-                $session->set("walletfilter", "anual");
-                echo json_encode(["filter" => true]);
-                return;
-            }
-			
-			if ($data["wallet"] == "mensal") {
-                $session->set("walletfilter", "mensal");
-                echo json_encode(["filter" => true]);
-                return;
-            }
-		
-            $wallet = filter_var($data["wallet"], FILTER_VALIDATE_INT);
-			
-            $getWallet = (new AppWallet())->find("application_id = :application_id AND id = :id",
-                "application_id={$this->user->application_id}&id={$wallet}")->count();
-
-            if ($getWallet) {
-                $session->set("walletfilter", $wallet);
-            }
-
-            echo json_encode(["filter" => true]);
-            return;
-        }
-
-        //CHART UPDATE
-        $chartData = (new AppInvoice())->chartData($this->user);
-        $categories = str_replace("'", "", explode(",", $chartData->categories));
-        $json["chart"] = [
-            "categories" => $categories,
-            "income" => array_map("abs", explode(",", $chartData->income)),
-            "expense" => array_map("abs", explode(",", $chartData->expense))
-        ];
-
-        //WALLET
-        $wallet = (new AppInvoice())->balance2($this->user);
-        $wallet->wallet = str_price($wallet->wallet);
-        $wallet->status = ($wallet->balance == "positive" ? "gradient-green" : "gradient-red");
-        $wallet->income = str_price($wallet->income);
-        $wallet->expense = str_price($wallet->expense);
-		$wallet->incomeunpaid = str_price($wallet->incomeunpaid);
-        $wallet->expenseunpaid = str_price($wallet->expenseunpaid);
-		$wallet->projectcost = str_price($wallet->projectcost);
-		
-        $json["wallet"] = $wallet;
-        echo json_encode($json);
-    }
+	
 
     /**
      * APP HOME
@@ -138,40 +63,9 @@ class Work extends Controller
     public function home(): void
     {
       
-        //CHART
-        //$chartData = (new AppInvoice())->chartData($this->user);
-        //END CHART
-		  
-        /*$income = (new AppInvoice())
-            ->find("application_id = :application_id AND type = 'income' AND status = 'unpaid' AND date(due_at) <= date(now() + INTERVAL 1 MONTH) {$whereWallet}",
-                "application_id={$this->user->application_id}")
-            ->order("due_at")
-            ->fetch(true);
-
-        $expense = (new AppInvoice())
-            ->find("application_id = :application_id AND type = 'expense' AND status = 'unpaid' AND date(due_at) <= date(now() + INTERVAL 1 MONTH) {$whereWallet}",
-                "application_id={$this->user->application_id}")
-            ->order("due_at")
-            ->fetch(true);
-        //END INCOME && EXPENSE
-
-        //WALLET
-        $wallet = (new AppInvoice())->balance2($this->user);
-        //END WALLET
-
-        //POSTS
-        $posts = (new Post())->findPost()->limit(3)->order("post_at DESC")->fetch(true);
-        //END POSTS*/
-
         echo $this->view->render("home", [
             
-            /*"chart" => $chartData,
-            "income" => $income,
-            "expense" => $expense,
-            "wallet" => $wallet,
-            "posts" => $posts,*/
-			
-			
+          	
         ]);
 	    
     }
@@ -185,19 +79,10 @@ class Work extends Controller
         $this->message->info("Você saiu com sucesso " . Auth::user()->first_name . ". Volte logo :)")->flash();
 
         Auth::logout();
-        redirect("/entrar");
-    }
-	
-	 /**
-     * APP LOGOUT Work
-     */
-    public function workLogout(): void
-    {
-        $this->message->info("Você saiu com sucesso " . Auth::user()->first_name . ". Volte logo :)")->flash();
-
-        Auth::logout();
         redirect("/work-entrar");
     }
+	
+	
 	
 	
 	/**
@@ -652,16 +537,16 @@ class Work extends Controller
 			$wallet = new AppWallet();		
 			$wallet->user_id = $this->user->id;
 			$wallet->application_id = $this->user->application_id;
-			$wallet->contract_id = $data["customer_id"];
+			$wallet->customer_id = $data["customer_id"];
 			$wallet->wallet = $walletName;
 			$wallet->save();
 			
 			
 			$invoice = new AppInvoice();
 			$invoice->customerInvoice($this->user, $data, $walletName, $value_total);
+			
 			$invoice->ownerTransfer($this->user, $data, $walletName, $value_total);
 
-		
 			
 				if (!$contractCreate->save()) {
 						
@@ -682,7 +567,7 @@ class Work extends Controller
          
 			"owners" => $owners->order("name")->fetch(true),
 			"customers" => $customers->order("name")->fetch(true),
-			"property" => $property->order("name")->fetch(true)
+			"property" => $property->order("id")->fetch(true)
 			
 			
         ]);
@@ -1046,7 +931,7 @@ class Work extends Controller
 	
 		$pager->pager($count->count(),25,(!empty($data["page"]) ? $data["page"] : 1));
 
-        echo $this->view->render("invoices2", [
+        echo $this->view->render("invoices", [
             "user" => $this->user,
             "categories" => $categories,
 			"wallet" => $wallet,

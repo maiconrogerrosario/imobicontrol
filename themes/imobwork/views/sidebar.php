@@ -60,8 +60,7 @@
 					<li><a title="Contratratos Inativos" href="<?= url("/work/carteirasinativas");?>">Contratratos Inativos</a></li>
 					<li><a title="Mensalidades a Receber" href="<?= url("/work/receber");?>">Mensalidades a Receber</a></li>
 					<li><a title="Repasses a Pagar" href="<?= url("/work/pagar");?>">Repasses a Pagar</a></li>
-					<li><a title="Faturas Fixas" href="<?= url("/work/fixas");?>">Fixas</a></li>
-					<li><a title="Faturas" href="<?= url("/work/faturas");?>">Faturas</a></li>
+					<li><a title="Faturas" href="<?= url("/work/faturas");?>">Mensalidades</a></li>
 				</ul>
 			</li>
 			
@@ -73,7 +72,7 @@
 					<span class="nav-tools"><i class="fa fa-fw arrow"></i>
 				</a>
 				<ul class="nav nav-sub nav-stacked">
-					<li><a title="Faturas" href="<?= url("/work/category"); ?>">MENSALIDADES</a></li>
+					<li><a title="Faturas" href="<?= url("/work/category"); ?>">Faturas</a></li>
 				</ul>
 			</li>
 			
